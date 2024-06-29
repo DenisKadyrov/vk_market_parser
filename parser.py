@@ -92,7 +92,7 @@ class Parser:
         data['price'] = self.get_price()
         data['description'] = self.get_desc()
         data['title'] = self.get_title()
-        data['category'] = self.get_category()
+        # data['category'] = self.get_category()
 
         return data
 
@@ -125,7 +125,6 @@ class Parser:
 
         if self.data['url'] == self.url:
             self.id = self.data['id']
-            print("yes")
 
         else:
             self.id = 0
