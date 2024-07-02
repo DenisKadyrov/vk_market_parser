@@ -69,12 +69,8 @@ class Parser:
         """
         Проходиться по всем ссылкам и передает случайное значение для time.sleep().
         """
-        for idx, link in enumerate(self.urls[self.id:]):
+        for idx, link in enumerate(self.urls):
             print(self.get_data('https://vk.com' + link))
-            self.data['id'] = self.id + idx
-            self.set_context()
-
-            # после того как прошлись по всем ссылкам окно браузера закрыватся
 
     def get_data(self, url) -> dict:
         self.driver.get(url)
@@ -114,31 +110,15 @@ class Parser:
         desc = self.driver.find_element(By.CLASS_NAME, "ItemDescription")
         return desc.text
 
-    def get_category(self) -> str:
-        category = self.driver.find_element(By.CSS_SELECTOR, ".ItemCardLayout__right h5 a")
-        return category.text
+    # def get_category(self) -> str:
+    #     category = self.driver.find_element(By.CSS_SELECTOR, ".ItemCardLayout__right h5 a")
+    #     return category.text
 
-    def get_context(self):
-        # Открытие и чтение JSON файла
-        with open('context.json', 'r') as file:
-            self.data = json.load(file)
-
-        if self.data['url'] == self.url:
-            self.id = self.data['id']
-
-        else:
-            self.id = 0
-            self.data['url'] = self.url
-
-    def set_context(self):
-        with open('context.json', 'w') as file:
-            json.dump(self.data, file, indent=4)
  
 
 
 if __name__ == "__main__":
     url = "https://vk.com/market-213936507?screen=group"
     pars = Parser(url)        
-    pars.get_context()
     pars.get_links()
     pars.get_all_data()
