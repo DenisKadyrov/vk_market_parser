@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 from bs4 import BeautifulSoup
 import time
 import random
@@ -92,10 +93,29 @@ class Parser:
 
         return data
 
+    def replace_size(self, url):
+        # Парсим URL
+        parsed_url = urlparse(url)
+        
+        # Разбираем параметры запроса
+        query_params = parse_qs(parsed_url.query)
+        
+        # Меняем значение параметра 'cs' на '510x510'
+        query_params['cs'] = '510x510'
+        
+        # Кодируем параметры обратно в строку запроса
+        new_query = urlencode(query_params, doseq=True)
+        
+        # Собираем новый URL
+        new_url = urlunparse(parsed_url._replace(query=new_query))
+        
+        return new_url
+
     def get_images(self) -> list:
         pattern = r'["\'](.*?)["\']'
         photo_blocks = self.driver.find_elements(By.CLASS_NAME, 'ItemGallery__thumb')
-        return [re.findall(pattern, photo_block.get_attribute('style'))[0] for photo_block in photo_blocks]
+        images = [re.findall(pattern, photo_block.get_attribute('style'))[0] for photo_block in photo_blocks]
+        return list(map(self.replace_size, images))
 
 
     def get_price(self) -> str:
