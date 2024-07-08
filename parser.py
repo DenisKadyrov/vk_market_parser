@@ -154,6 +154,7 @@ class Parser:
 
     def get_category(self) -> str:
         category = self.response['response']['items'][self.id]['category']['name']
+        self.id += 1
         return category
 
  
