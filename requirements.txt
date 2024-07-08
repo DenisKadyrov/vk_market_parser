@@ -1,4 +1,4 @@
-beautifulsoup4
+bautifulsoup4
 selenium
 webdriver-manager
 urllib3

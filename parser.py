@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 import time
 import random
 import json
+import requests
 import re
 
 
@@ -14,6 +15,7 @@ import re
 class Parser:
     def __init__(self, url: str) -> None:
         self.url = url
+        self.id = 0
     
     def create_driver(self):
         # Настройка драйвера Chrome
@@ -42,6 +44,25 @@ class Parser:
                 break
             last_height = new_height
 
+    def get_market(self) -> None:
+        access_token = "vk1.a.dz0piXUODPKvtSX110vxx9hUIgnFLbJBEvSfzRyjJVsYQwMp6R3ni8gYJPFTugZMOKh_ieRpdzkS3SHCixuCKaXBsDkcUiqjbDkDZGm9Zi0EGet6yKM377a5vssewo7CMGnpUmWuziz1m3VSuYC3kztTkf5LVMCIkgvxjMnZCLsXUBVttvOadvwJvSSowNUlHLmbtFikGDczJ8_RWqF1EA"
+        api_version = "5.199"
+
+
+        # Извлечение owner_id из URL
+        match = re.search(r"market-(\d+)", self.url)
+
+        owner_id = match.group(1)
+
+        # Добавление заголовка Authorization
+        headers = {
+            "Authorization": "Bearer " + access_token
+        }
+        server_url = f"https://api.vk.com/method/market.get?owner_id=-{owner_id}&v={api_version}"
+
+        # Выполнение запроса
+        self.response = requests.get(server_url, headers=headers).json()
+
 
     def get_links(self) -> None:
         """
@@ -50,7 +71,8 @@ class Parser:
         """
         self.create_driver()
         # Открытие сайта Avito
-        self.driver.get(url)
+        self.driver.get(self.url)
+
 
         # прокрутить вниз
         self.scroll_page()
@@ -89,7 +111,7 @@ class Parser:
         data['price'] = self.get_price()
         data['description'] = self.get_desc()
         data['title'] = self.get_title()
-        # data['category'] = self.get_category()
+        data['category'] = self.get_category()
 
         return data
 
@@ -130,15 +152,16 @@ class Parser:
         desc = self.driver.find_element(By.CLASS_NAME, "ItemDescription")
         return desc.text
 
-    # def get_category(self) -> str:
-    #     category = self.driver.find_element(By.CSS_SELECTOR, ".ItemCardLayout__right h5 a")
-    #     return category.text
+    def get_category(self) -> str:
+        category = self.response['response']['items'][self.id]['category']['name']
+        return category
 
  
 
 
 if __name__ == "__main__":
-    url = "https://vk.com/market-213936507?screen=group"
+    url = "https://vk.com/market-186208863"
     pars = Parser(url)        
+    pars.get_market()
     pars.get_links()
     pars.get_all_data()
