@@ -45,7 +45,7 @@ class Parser:
             last_height = new_height
 
     def get_market(self) -> None:
-        access_token = "vk1.a.dz0piXUODPKvtSX110vxx9hUIgnFLbJBEvSfzRyjJVsYQwMp6R3ni8gYJPFTugZMOKh_ieRpdzkS3SHCixuCKaXBsDkcUiqjbDkDZGm9Zi0EGet6yKM377a5vssewo7CMGnpUmWuziz1m3VSuYC3kztTkf5LVMCIkgvxjMnZCLsXUBVttvOadvwJvSSowNUlHLmbtFikGDczJ8_RWqF1EA"
+        access_token = ""
         api_version = "5.199"
 
 
